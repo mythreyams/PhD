@@ -1,0 +1,53 @@
+[Buildset]
+BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x002\x00B\x00o\x00u\x00t\x00o\x00n\x00P\x00a\x00r\x00a\x00m\x00e\x00t\x00e\x00r\x00E\x00s\x00t\x00i\x00m\x00a\x00t\x00i\x00o\x00n)
+
+[CMake]
+Build Directory Count=2
+CMakeDir=/usr/share/cmake/Modules
+Current Build Directory Index=1
+ProjectRootRelative=./
+
+[CMake][CMake Build Directory 0]
+Build Directory Path=file:///network_home/mythreya/projects/BoutonParameterEstimation/build
+Build Type=Debug
+CMake Binary=file:///usr/bin/cmake
+Environment Profile=
+Extra Arguments=
+Install Directory=
+
+[CMake][CMake Build Directory 1]
+Build Directory Path=file:///network_home/mythreya/projects/BoutonParameterEstimation/
+Build Type=
+CMake Binary=file:///usr/bin/cmake
+Environment Profile=
+Extra Arguments=
+Install Directory=file:///usr/local
+
+[Launch]
+Launch Configurations=Launch Configuration 0
+
+[Launch][Launch Configuration 0]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=New Native Application Configuration
+Type=Native Application
+
+[Launch][Launch Configuration 0][Data]
+Arguments="/network_home/mythreya/Documents/output/S05_S28/DS_20140122/S005_S028_merged_finished_test2.am" "/network_home/mythreya/Documents/output/S05_S28/DS_20140122/S016/ProximityDetection/proximity_roi3/" 0 46 "/network_home/mythreya/Documents/output/S05_S28/DS_20140122/S016/ProximityDetection/proximity_roi3/loadROI.hx" "/network_home/mythreya/Documents/output/S05_S28/"\s
+Debugger Shell=
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+Dependency Action=Nothing
+Display Demangle Names=true
+Display Static Members=false
+EnvironmentGroup=default
+Executable=file:///network_home/mythreya/projects/BoutonParameterEstimation/BoutonFinder
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+GDB Path=
+Project Target=BoutonParameterEstimation,BoutonFinder
+Remote GDB Config Script=
+Remote GDB Run Script=.
+Remote GDB Shell Script=
+Start With=ApplicationOutput
+Use External Terminal=false
+Working Directory=
+isExecutable=true

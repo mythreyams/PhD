@@ -1,0 +1,209 @@
+Parameters {
+    SpatialGraphUnitsVertex {
+        GraphLabels {
+            Unit -1,
+            Dimension -1
+        }
+    }
+    SpatialGraphUnitsEdge {
+        GraphLabels {
+            Unit -1,
+            Dimension -1
+        }
+    }
+    SpatialGraphUnitsPoint {
+        Radius {
+            Unit -1,
+            Dimension -1
+        }
+    }
+    GraphLabels {
+        Neuron {
+            Dendrite {
+                ApicalDendrite {
+                    Color 1 0.5 0.5,
+                    Id 4
+                }
+                BasalDendrite {
+                    Color 0.8 0.4 0.4,
+                    Id 5
+                }
+                Color 1 0 0,
+                Id 3
+            }
+            Axon {
+                Color 0 0 1,
+                Id 6
+            }
+            Soma {
+                Color 1 0 0,
+                Id 7
+            }
+            Color 1 0 0,
+            Id 2
+        }
+        Landmark {
+            Pia {
+                Color 0 1 0.5,
+                Id 9
+            }
+            WM {
+                Color 1 0.5 0,
+                Id 10
+            }
+            Barrel {
+                aRow {
+                    A1 {
+                        Color 1 0.2 0.2,
+                        Id 13
+                    }
+                    A2 {
+                        Color 1 0.2 0.2,
+                        Id 14
+                    }
+                    A3 {
+                        Color 1 0.2 0.2,
+                        Id 15
+                    }
+                    A4 {
+                        Color 1 0.2 0.2,
+                        Id 16
+                    }
+                    Color 1 0.2 0.2,
+                    Id 12
+                }
+                bRow {
+                    B1 {
+                        Color 1 0.25 0.25,
+                        Id 18
+                    }
+                    B2 {
+                        Color 1 0.25 0.25,
+                        Id 19
+                    }
+                    B3 {
+                        Color 1 0.25 0.25,
+                        Id 20
+                    }
+                    B4 {
+                        Color 1 0.25 0.25,
+                        Id 21
+                    }
+                    Color 1 0.25 0.25,
+                    Id 17
+                }
+                cRow {
+                    C1 {
+                        Color 1 0.3 0.3,
+                        Id 23
+                    }
+                    C2 {
+                        Color 1 0.3 0.3,
+                        Id 24
+                    }
+                    C3 {
+                        Color 1 0.3 0.3,
+                        Id 25
+                    }
+                    C4 {
+                        Color 1 0.3 0.3,
+                        Id 26
+                    }
+                    C5 {
+                        Color 1 0.3 0.3,
+                        Id 27
+                    }
+                    C6 {
+                        Color 1 0.3 0.3,
+                        Id 28
+                    }
+                    Color 1 0.3 0.3,
+                    Id 22
+                }
+                dRow {
+                    D1 {
+                        Color 1 0.35 0.35,
+                        Id 30
+                    }
+                    D2 {
+                        Color 1 0.35 0.35,
+                        Id 31
+                    }
+                    D3 {
+                        Color 1 0.35 0.35,
+                        Id 32
+                    }
+                    D4 {
+                        Color 1 0.35 0.35,
+                        Id 33
+                    }
+                    D5 {
+                        Color 1 0.35 0.35,
+                        Id 34
+                    }
+                    D6 {
+                        Color 1 0.35 0.35,
+                        Id 35
+                    }
+                    Color 1 0.35 0.35,
+                    Id 29
+                }
+                eRow {
+                    E1 {
+                        Color 1 0.4 0.4,
+                        Id 37
+                    }
+                    E2 {
+                        Color 1 0.4 0.4,
+                        Id 38
+                    }
+                    E3 {
+                        Color 1 0.4 0.4,
+                        Id 39
+                    }
+                    E4 {
+                        Color 1 0.4 0.4,
+                        Id 40
+                    }
+                    E5 {
+                        Color 1 0.4 0.4,
+                        Id 41
+                    }
+                    E6 {
+                        Color 1 0.4 0.4,
+                        Id 42
+                    }
+                    Color 1 0.4 0.4,
+                    Id 36
+                }
+                greekRow {
+                    Alpha {
+                        Color 1 0.1 0.1,
+                        Id 44
+                    }
+                    Beta {
+                        Color 1 0.1 0.1,
+                        Id 45
+                    }
+                    Gamma {
+                        Color 1 0.1 0.1,
+                        Id 46
+                    }
+                    Delta {
+                        Color 1 0.1 0.1,
+                        Id 47
+                    }
+                    Color 1 0.1 0.1,
+                    Id 43
+                }
+                Color 0 1 0,
+                Id 11
+            }
+            Color 0 1 1,
+            Id 8
+        }
+        Id 0,
+        Color 0 0 0
+    }
+    ContentType "HxSpatialGraph"
+}

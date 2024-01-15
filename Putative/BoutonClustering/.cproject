@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 4.0.0?>
+
+<cproject>
+<storageModule moduleId="org.eclipse.cdt.core.settings">
+<cconfiguration id="org.eclipse.cdt.core.default.config.1">
+<storageModule buildSystemId="org.eclipse.cdt.core.defaultConfigDataProvider" id="org.eclipse.cdt.core.default.config.1" moduleId="org.eclipse.cdt.core.settings" name="Configuration">
+<externalSettings/>
+<extensions>
+<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
+<extension id="org.eclipse.cdt.core.GNU_ELF" point="org.eclipse.cdt.core.BinaryParser">
+<attribute key="addr2line" value="addr2line"/>
+<attribute key="c++filt" value="c++filt"/>
+</extension>
+</extensions>
+</storageModule>
+<storageModule moduleId="org.eclipse.cdt.core.language.mapping">
+<project-mappings/>
+</storageModule>
+<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+<storageModule moduleId="org.eclipse.cdt.core.pathentry">
+<pathentry excluding="**/CMakeFiles/" kind="out" path=""/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Utilities/gdcm/src" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/Binary/Utilities/gdcm" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/Binary/Utilities/vxl/core" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/Binary/Utilities/vxl/vcl" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/Binary/Utilities/vxl/v3p/netlib" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Utilities/vxl/core" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Utilities/vxl/vcl" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Utilities/vxl/v3p/netlib" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Code/Numerics/Statistics" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Utilities" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/Binary/Utilities" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Utilities/itkExtHdrs" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Utilities/nifti/znzlib" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Utilities/nifti/niftilib" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Utilities/expat" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/Binary/Utilities/expat" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/Binary/Utilities/DICOMParser" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Utilities/DICOMParser" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/Binary/Utilities/NrrdIO" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Utilities/NrrdIO" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Utilities/MetaIO" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Code/SpatialObject" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Code/Numerics/NeuralNetworks" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Code/Numerics/FEM" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Code/IO" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Code/Numerics" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Code/Common" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Code/BasicFilters" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/InsightToolkit-3.20.1/Code/Algorithms" kind="inc" path="" system="true"/>
+<pathentry include="/home/neuromorph/ITK/Binary" kind="inc" path="" system="true"/>
+<pathentry include="/network_home/mythreya/projects/BoutonParameterEstimation/src" kind="inc" path="" system="true"/>
+</storageModule>
+<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
+<buildTargets>
+<target name="[exe] BoutonFinder" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>BoutonFinder</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[exe] BoutonFinder/fast" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>BoutonFinder/fast</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="Build" path="[Targets]/[exe] BoutonFinder" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments>-C "/network_home/mythreya/projects/BoutonParameterEstimation" </buildArguments>
+<buildTarget>BoutonFinder</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="Clean" path="[Targets]/[exe] BoutonFinder" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/cmake</buildCommand>
+<buildArguments>-E chdir "/network_home/mythreya/projects/BoutonParameterEstimation" "/usr/bin/cmake" -P "CMakeFiles/BoutonFinder.dir/cmake_clean.cmake"</buildArguments>
+<buildTarget></buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name=": rebuild_cache" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>rebuild_cache</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name=": all" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>all</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name=": clean" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>clean</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] src/amiraReader.o" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>src/amiraReader.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] src/amiraReader.i" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>src/amiraReader.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] src/amiraReader.s" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>src/amiraReader.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] src/basics.o" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>src/basics.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] src/basics.i" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>src/basics.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] src/basics.s" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>src/basics.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] src/bouton_finder.o" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>src/bouton_finder.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] src/bouton_finder.i" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>src/bouton_finder.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] src/bouton_finder.s" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>src/bouton_finder.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] src/bouton_finder_client.o" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>src/bouton_finder_client.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] src/bouton_finder_client.i" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>src/bouton_finder_client.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] src/bouton_finder_client.s" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>src/bouton_finder_client.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] src/bouton_params.o" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>src/bouton_params.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] src/bouton_params.i" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>src/bouton_params.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] src/bouton_params.s" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>src/bouton_params.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[obj] src/utility.o" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>src/utility.o</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[pre] src/utility.i" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>src/utility.i</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+<target name="[to asm] src/utility.s" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>/usr/bin/gmake</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>src/utility.s</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>false</useDefaultCommand>
+</target>
+</buildTargets>
+</storageModule>
+<storageModule moduleId="scannerConfiguration">
+<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile"/>
+<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerProjectProfile">
+<buildOutputProvider>
+<openAction enabled="true" filePath=""/>
+<parser enabled="true"/>
+</buildOutputProvider>
+<scannerInfoProvider id="specsFile">
+<runAction arguments="-E -P -v -dD ${plugin_state_location}/${specs_file}" command="/usr/bin/cc" useDefault="true"/>
+<parser enabled="true"/>
+</scannerInfoProvider>
+</profile>
+<profile id="org.eclipse.cdt.make.core.GCCStandardMakePerFileProfile">
+<buildOutputProvider>
+<openAction enabled="true" filePath=""/>
+<parser enabled="true"/>
+</buildOutputProvider>
+<scannerInfoProvider id="makefileGenerator">
+<runAction arguments="-f ${project_name}_scd.mk" command="/usr/bin/gmake" useDefault="true"/>
+<parser enabled="true"/>
+</scannerInfoProvider>
+</profile>
+</storageModule>
+</cconfiguration>
+</storageModule>
+<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+<project id="BoutonFinder.null.1" name="BoutonFinder"/>
+</storageModule>
+</cproject>

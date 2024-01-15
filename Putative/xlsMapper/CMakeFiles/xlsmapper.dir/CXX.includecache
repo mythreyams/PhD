@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/mythreya/projects/xlsMapper/main.cpp
+iostream
+-
+fstream
+-
+sstream
+-
+list
+-
+vector
+-
+string
+-
+stdlib.h
+-
+math.h
+-
+

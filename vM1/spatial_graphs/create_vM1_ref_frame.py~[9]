@@ -1,0 +1,8 @@
+#from spatial_graphs import AmiraSpatialGraph
+#from spatial_graphs import Landmarks
+import Landmarks
+
+l = Landmarks.Landmarks(pts=[[1,2,3],[2,3,4]])
+
+#import spatial_graphs.Surfaces
+

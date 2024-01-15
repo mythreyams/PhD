@@ -1,0 +1,1 @@
+/opt/intel/bin/icpc   -O2 -openmp    -openmp CMakeFiles/SpatialGraphToDistanceTree.dir/src/spatialGraphToDistanceTree.o CMakeFiles/SpatialGraphToDistanceTree.dir/src/amiraReader.o CMakeFiles/SpatialGraphToDistanceTree.dir/src/basics.o CMakeFiles/SpatialGraphToDistanceTree.dir/src/utility.o  -o SpatialGraphToDistanceTree -rdynamic 

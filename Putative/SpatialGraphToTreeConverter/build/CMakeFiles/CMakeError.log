@@ -1,0 +1,79 @@
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: /opt/intel/bin/icc 
+Build flags: 
+Id flags: 
+
+The output was:
+4
+Catastrophic error: could not set locale "" to allow processing of multibyte characters
+
+compilation aborted for CMakeCCompilerId.c (code 4)
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: /opt/intel/bin/icc 
+Build flags: 
+Id flags: -c
+
+The output was:
+4
+Catastrophic error: could not set locale "" to allow processing of multibyte characters
+
+compilation aborted for CMakeCCompilerId.c (code 4)
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: /opt/intel/bin/icc 
+Build flags: 
+Id flags: -Aa
+
+The output was:
+4
+Catastrophic error: could not set locale "" to allow processing of multibyte characters
+
+compilation aborted for CMakeCCompilerId.c (code 4)
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /opt/intel/bin/icpc 
+Build flags: 
+Id flags: 
+
+The output was:
+4
+Catastrophic error: could not set locale "" to allow processing of multibyte characters
+
+compilation aborted for CMakeCXXCompilerId.cpp (code 4)
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /opt/intel/bin/icpc 
+Build flags: 
+Id flags: -c
+
+The output was:
+4
+Catastrophic error: could not set locale "" to allow processing of multibyte characters
+
+compilation aborted for CMakeCXXCompilerId.cpp (code 4)
+
+
+Determining if the C compiler works failed with the following output:
+Change Dir: /home/mythreya/projects/SpatialGraphToTreeConverter/build/CMakeFiles/CMakeTmp
+
+Run Build Command:/usr/bin/gmake "cmTryCompileExec3160881430/fast"
+/usr/bin/gmake -f CMakeFiles/cmTryCompileExec3160881430.dir/build.make CMakeFiles/cmTryCompileExec3160881430.dir/build
+gmake: Warning: File `Makefile' has modification time 0.34 s in the future
+gmake[1]: Entering directory `/home/mythreya/projects/SpatialGraphToTreeConverter/build/CMakeFiles/CMakeTmp'
+gmake[1]: Warning: File `CMakeFiles/cmTryCompileExec3160881430.dir/flags.make' has modification time 0.31 s in the future
+/usr/local/bin/cmake -E cmake_progress_report /home/mythreya/projects/SpatialGraphToTreeConverter/build/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec3160881430.dir/testCCompiler.c.o
+/opt/intel/bin/icc    -o CMakeFiles/cmTryCompileExec3160881430.dir/testCCompiler.c.o   -c /home/mythreya/projects/SpatialGraphToTreeConverter/build/CMakeFiles/CMakeTmp/testCCompiler.c
+Catastrophic error: could not set locale "" to allow processing of multibyte characters
+
+compilation aborted for /home/mythreya/projects/SpatialGraphToTreeConverter/build/CMakeFiles/CMakeTmp/testCCompiler.c (code 4)
+gmake[1]: *** [CMakeFiles/cmTryCompileExec3160881430.dir/testCCompiler.c.o] Error 4
+gmake[1]: Leaving directory `/home/mythreya/projects/SpatialGraphToTreeConverter/build/CMakeFiles/CMakeTmp'
+gmake: *** [cmTryCompileExec3160881430/fast] Error 2
+
+

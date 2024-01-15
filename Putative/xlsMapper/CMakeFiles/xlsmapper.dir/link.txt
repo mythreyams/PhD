@@ -1,0 +1,1 @@
+/opt/intel/bin/icpc       CMakeFiles/xlsmapper.dir/main.cpp.o  -o xlsmapper -rdynamic 

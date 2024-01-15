@@ -1,0 +1,686 @@
+import vtk
+from .spatial_graphs.AmiraSpatialGraph import AmiraSpatialGraph
+
+class Surface(AmiraSpatialGraph):
+    ''' This class contains all the functions to handle surfaces'''
+    def __init__(self,filename='',pts = [],polydata=None):
+        if len(filename) > 0:
+            self.surface = self.read_polydata(filename)
+            self.transform_applied = False
+        elif len(pts) > 0:
+            self.surface = self.convert_points_to_polydata(pts)
+            self.transform_applied = False
+        elif polydata is not None:
+            self.surface = polydata
+            self.transform_applied = False
+        else:
+            self.surface = vtk.vtkPolyData()
+            self.transform_applied = False
+
+    def read_polydata(self,filename):
+        ##print(os.path.basename(filename)[-3:])
+        if os.path.basename(filename)[-3:] == 'vtk':
+            reader = vtk.vtkPolyDataReader()
+            reader.SetFileName(filename)
+            reader.Update()
+            return reader.GetOutput()
+        elif os.path.basename(filename)[-3:] == 'stl':
+            reader = vtk.vtkSTLReader()
+            reader.SetFileName(filename)
+            reader.Update()
+            return reader.GetOutput()
+
+
+    def divide_surface(self,nr_divisions):
+        surf_devider = vtk.vtkLoopSubdivisionFilter()
+        surf_devider.SetNumberOfSubdivisions(nr_divisions)
+        surf_devider.SetInputData(self.surface)
+        surf_devider.Update()
+        self.surface = surf_devider.GetOutput()
+        return surf_devider.GetOutput()
+
+    def convert_points_to_polydata(self,pts):
+        points = vtk.vtkPoints()
+        points.SetDataTypeToFloat()
+        vertices = vtk.vtkCellArray()
+
+        for i in range(len(pts)):
+            ##print(len(pts[i]))
+            ids = points.InsertNextPoint([pts[i][0],pts[i][1],pts[i][2]])
+
+            vertices.InsertNextCell(1,[i])
+        polydata = vtk.vtkPolyData()
+        polydata.SetPoints(points)
+        polydata.SetVerts(vertices)
+        return polydata
+
+    def write_surface_mesh(self,filename):
+        writer = vtk.vtkPolyDataWriter()
+        writer.SetInputData(self.surface)
+        writer.SetFileName(filename)
+        writer.Write()
+
+    def apply_icp_transform(self,icp):
+        if self.transform_applied  is False:
+            icpTransformFilter = vtk.vtkTransformPolyDataFilter()
+            icpTransformFilter.SetInputData(self.surface)
+            icpTransformFilter.SetTransform(icp)
+            icpTransformFilter.Update()
+            self.surface = icpTransformFilter.GetOutput()
+
+    def apply_tr_matrix(self,tr_mat,inverse=False):
+        tr_mat_4x4 = np.reshape(tr_mat,[4,4])
+        # Set the matrix
+        mat44 = vtk.vtkMatrix4x4()
+        for i in range(4):
+            for j in range(4):
+                mat44.SetElement(i,j,tr_mat_4x4[j,i])
+        tr = vtk.vtkTransform()
+        tr.SetMatrix(mat44)
+        if inverse:
+            tr.Inverse()
+        tr.Update()
+        # apply this transformation to the surface polydata
+        icpTransformFilter = vtk.vtkTransformPolyDataFilter()
+        icpTransformFilter.SetTransform(tr)
+        icpTransformFilter.SetInputData(self.surface)
+        icpTransformFilter.Update()
+        self.surface = icpTransformFilter.GetOutput()
+
+    def apply_rotation(self,rot_mat=[],translation=None):
+
+
+        # now set the 4x4 transformation matrix
+        tr_mat = [rot_mat[0][0],rot_mat[0][1],rot_mat[0][2],0],[rot_mat[1][0],rot_mat[1][1],rot_mat[1][2],0],                    [rot_mat[2][0],rot_mat[2][1],rot_mat[2][2],0],[0,0,0,1]
+        tr_mat = np.reshape(tr_mat,[4,4])
+        # Set the matrix
+        mat44 = vtk.vtkMatrix4x4()
+        for i in range(4):
+            for j in range(4):
+                mat44.SetElement(i,j,tr_mat[i,j])
+        tr = vtk.vtkTransform()
+        tr.SetMatrix(mat44)
+        tr.Update()
+        # apply this transformation to the surface polydata
+        icpTransformFilter = vtk.vtkTransformPolyDataFilter()
+        icpTransformFilter.SetTransform(tr)
+        icpTransformFilter.SetInputData(self.surface)
+        icpTransformFilter.Update()
+        self.surface = icpTransformFilter.GetOutput()
+
+        if translation is not None:
+            # Set translation as transformation and apply to polydata
+            translator = vtk.vtkTransform()
+            translator.Translate(-translation)
+            TransformFilter = vtk.vtkTransformPolyDataFilter()
+            TransformFilter.SetInputData(self.surface)
+            TransformFilter.SetTransform(translator)
+            TransformFilter.Update()
+            self.surface = TransformFilter.GetOutput()
+
+    def get_surface(self,):
+        return self.surface
+
+    def append(self,surf2):
+        appender = vtk.vtkAppendPolyData()
+        appender.AddInputData(self.surface)
+        appender.AddInputData(surf2.get_surface())
+        appender.Update()
+        self.surface = appender.GetOutput()
+
+    def get_surface_pts(self,):
+        pts = []
+        for i in range(self.surface.GetNumberOfPoints()):
+            pts.append(self.surface.GetPoints().GetPoint(i))
+
+        return pts
+
+    def decimate_surface(self,reduction_ratio):
+        deci = vtk.vtkDecimatePro()
+        deci.SetInputData(self.surface)
+        deci.SetTargetReduction(reduction_ratio)
+        deci.Update()
+
+        self.surface = deci.GetOutput()
+
+    def get_ray_cast_surface_pts(self,center=[0,0,0],surf_list = [],theta_res=6,phi_res=6,start_phi=0,end_phi=90,                                  start_theta=0,end_theta=360,get_rays_sg = False,get_ray_theta=False,get_ray_phi=False,                                get_rays_for_given_theta=None,get_rays_for_given_phi=None,get_boundary_rays=False,validation_nr_pts=0):
+        '''Create spherical core from which to cast ray'''
+        #center = [0,0,-4000]
+        pia_sphere = vtk.vtkSphereSource()
+        pia_sphere.SetCenter(center)
+        pia_sphere.SetRadius(1)
+        pia_sphere.SetThetaResolution(theta_res)
+        pia_sphere.SetPhiResolution(phi_res)
+        pia_sphere.SetStartPhi(start_phi)
+        pia_sphere.SetEndPhi(end_phi)
+        pia_sphere.SetStartTheta(start_theta)
+        pia_sphere.SetEndTheta(end_theta)
+        pia_sphere.SetLatLongTessellation(True)
+        pia_sphere.Update()
+
+        pia_cell_centers = vtk.vtkCellCenters()
+        pia_cell_centers.SetInputData(pia_sphere.GetOutput())
+        pia_cell_centers.Update()
+        pia_centroid_cell_centers = pia_cell_centers.GetOutput()
+        ##print('pia_centroid_cell_centers {}'.format(pia_centroid_cell_centers))
+        pia_sphere_normals = vtk.vtkPolyDataNormals()
+        pia_sphere_normals.SetInputConnection(pia_sphere.GetOutputPort())
+        pia_sphere_normals.ComputePointNormalsOff()
+        pia_sphere_normals.ComputeCellNormalsOn()
+        pia_sphere_normals.SplittingOff()
+        pia_sphere_normals.FlipNormalsOff()
+        pia_sphere_normals.AutoOrientNormalsOn()
+        pia_sphere_normals.Update()
+        pia_source_normals = pia_sphere_normals.GetOutput().GetCellData().GetNormals()
+
+
+        obbPia = vtk.vtkOBBTree()
+        obbPia.SetDataSet(self.surface)
+        obbPia.BuildLocator()
+
+        surf_instersecting_pts = []
+        rays_sg = AmiraSpatialGraph()
+        #rays_for_given_theta_sg = AmiraSpatialGraph()
+        #rays_for_given_phi_sg = AmiraSpatialGraph()
+        #rays_theta = []
+        #rays_phi = []
+        idx =-1
+
+        #min_theta = 10000
+        #max_theta = 0
+        #min_phi = 10000
+        #max_phi = 0
+
+        #min_rays_theta_sg = AmiraSpatialGraph()
+        #min_rays_phi_sg = AmiraSpatialGraph()
+        #max_rays_theta_sg = AmiraSpatialGraph()
+        #max_rays_phi_sg = AmiraSpatialGraph()
+
+        rays_per_phi_angle_list = []
+        # loop through rays and find the intersecting for on the surface
+        ##print(pia_centroid_cell_centers.GetNumberOfPoints())
+        phi_step = int((end_phi-start_phi)/phi_res)
+        theta_step = int((end_theta-start_theta)/theta_res)
+        for phi in range(start_phi,end_phi-phi_step,phi_step):
+            rays_for_given_phi_sg = AmiraSpatialGraph()
+            #angles_theta = []
+            for theta in range(start_theta,end_theta,theta_step):
+
+        #for idx in range(pia_centroid_cell_centers.GetNumberOfPoints()):
+                idx = idx + 1
+                point = pia_centroid_cell_centers.GetPoint(idx)
+                ##print(point)
+                normal = pia_source_normals.GetTuple(idx)
+
+                # Calculate the 'target' of the ray based on 'RayCastLength'
+                pointRayTarget = list(np.array(point) + 10000*np.array(normal))
+
+
+
+                if len(surf_list) == 0:
+                    points = vtk.vtkPoints()
+                    code = obbPia.IntersectWithLine(pointRayTarget, point, points, None)
+                    if points.GetNumberOfPoints() > validation_nr_pts:
+                        #pts = []
+                        #for i in range(points.GetNumberOfPoints()):
+                        #    pts.append(points.GetPoint(i))
+                        surf_instersecting_pts.append(points.GetPoint(0))
+                else:
+                    # need to iterate through the list of surfaces in order to find average
+                    intersection_pt_list = []
+                    for surf in surf_list:
+
+                        obb = vtk.vtkOBBTree()
+                        obb.SetDataSet(surf)
+                        obb.BuildLocator()
+                        points = vtk.vtkPoints()
+                        code = obb.IntersectWithLine(pointRayTarget, point, points, None)
+                        if points.GetNumberOfPoints() > 0:
+                            intersection_pt_list.append(points.GetPoint(0))
+                    if len(intersection_pt_list)>validation_nr_pts:
+                        if len(intersection_pt_list) > 1:
+                            surf_instersecting_pts.append(np.array(intersection_pt_list).mean(axis=0))
+                        elif len(intersection_pt_list)==1:
+                            surf_instersecting_pts.append(intersection_pt_list[0])
+
+
+                    #if get_rays_sg:
+                        #rays_sg.add_edge(center,list(np.array(points.GetPoint(0)) + 10000*np.array(normal)))
+
+                    #if get_ray_theta:
+                    #    rays_theta.append(theta)
+
+                    #if get_ray_phi:
+                    #    rays_phi.append(phi)
+
+                    #if get_rays_for_given_theta is not None:
+                    #    if get_rays_for_given_theta == theta:
+                    #        rays_for_given_theta_sg.add_edge(center,list(np.array(points.GetPoint(0)) + 10000*np.array(normal)))
+
+                    #if get_rays_for_given_phi is not None:
+                    #    if get_rays_for_given_phi == phi:
+
+                    #rays_for_given_phi_sg.add_edge(center,list(np.array(points.GetPoint(0)) + 10000*np.array(normal)))
+
+            #if len(rays_for_given_phi_sg.graph_data.edge_list) > 0:
+            #    rays_per_phi_angle_list.append(rays_for_given_phi_sg)
+
+        return_list = []
+
+        return_list.append(surf_instersecting_pts)
+
+        if get_rays_sg:
+            return_list.append(rays_sg)
+
+        if get_ray_theta:
+            return_list.append(rays_theta)
+
+        if get_ray_phi:
+            return_list.append(rays_phi)
+
+        if get_rays_for_given_theta is not None:
+            return_list.append(rays_for_given_theta_sg)
+
+        if get_rays_for_given_phi is not None:
+            return_list.append(rays_for_given_phi_sg)
+
+
+        if get_boundary_rays:
+            #return_list.append(min_rays_theta_sg)
+            #return_list.append(max_rays_theta_sg)
+            return_list.append(rays_per_phi_angle_list[0])
+            return_list.append(rays_per_phi_angle_list[len(rays_per_phi_angle_list)-1])
+
+        return return_list
+
+    def clip_surface(self, path,pattern, op_filename = None):
+
+        # read the each ray from ray burst to get last z contour
+        zmin_pts = []
+        for file in glob.glob(path+pattern):
+            l = Landmarks(file)
+            zmin_pts.append(sorted(l.pts,key=lambda x:x[2])[0])
+
+        # find extreme pts of the last z contour to get make a square
+        center = np.mean(np.array(zmin_pts),axis=0)
+        xmin_ind = np.argmin(np.array(zmin_pts),axis=0)[0]
+        xmax_ind = np.argmax(np.array(zmin_pts),axis=0)[0]
+        xmin = zmin_pts[xmin_ind]
+        xmax = zmin_pts[xmax_ind]
+
+        ymin_ind = np.argmin(np.array(zmin_pts),axis=0)[1]
+        ymax_ind = np.argmax(np.array(zmin_pts),axis=0)[1]
+        ymin = zmin_pts[ymin_ind]
+        ymax = zmin_pts[ymax_ind]
+
+        # make a sqaure using the pts above
+        square = vtk.vtkPlaneSource()
+        square.SetCenter(center)
+        square.SetPoint1(ymin)
+        square.SetPoint2(ymax)
+        square.Update()
+        #Surface(polydata=square.GetOutput()).write_surface_mesh(path+'square.vtk')
+
+        # use this sqaure as the cutting plane
+        pl = vtk.vtkPlane()
+        pl.SetOrigin(center)
+        pl.SetNormal(square.GetNormal())
+
+        # Cut the surface using the cutting plane
+        ex = vtk.vtkExtractPolyDataGeometry()
+        ex.SetImplicitFunction(pl)
+        ex.SetInputData(self.surface)
+        ex.SetExtractInside(False)
+        ex.Update()
+
+        if op_filename is not None:
+            Surface(polydata=ex.GetOutput()).write_surface_mesh(op_filename)
+
+    def clip_surface_at_given_z(self, z_offset, output_filename = None,check_correct_clipped_part=False):
+
+        # use this sqaure as the cutting plane
+        lower_bound = [self.surface.GetBounds()[0],self.surface.GetBounds()[2],self.surface.GetBounds()[4]]
+        upper_bound = [self.surface.GetBounds()[1],self.surface.GetBounds()[3],self.surface.GetBounds()[5]]
+        #center = [(lower_bound[0]+upper_bound[0])/2,(lower_bound[1]+upper_bound[1])/2,(lower_bound[2]+upper_bound[2])/2]
+
+        z = upper_bound[2]+z_offset
+        pt1 = [lower_bound[0],lower_bound[1],z]
+        pt2 = [upper_bound[0],upper_bound[1],z]
+        pt3 = [lower_bound[0],upper_bound[1],z]
+
+        triangle = vtk.vtkTriangle()
+        triangle.GetPointIds().SetId(0,0)
+        triangle.GetPointIds().SetId(1,1)
+        triangle.GetPointIds().SetId(2,2)
+
+        points = vtk.vtkPoints()
+        points.InsertNextPoint(pt1)
+        points.InsertNextPoint(pt2)
+        points.InsertNextPoint(pt3)
+
+        triangles = vtk.vtkCellArray()
+        triangles.InsertNextCell(triangle )
+
+        tri_min = vtk.vtkPolyData()
+        tri_min.SetPoints(points)
+        tri_min.SetPolys(triangles)
+
+        #Surface(polydata=tri_min).write_surface_mesh(output_path+exp_name+'tri_min.vtk')
+
+        norm_gen = vtk.vtkPolyDataNormals()
+        norm_gen.SetInputData(tri_min)
+        norm_gen.ComputeCellNormalsOn()
+        norm_gen.Update()
+        pdata_with_norms = norm_gen.GetOutput()
+        arr = pdata_with_norms.GetCellData().GetNormals()
+        norms_min = [arr.GetComponent(0,0),arr.GetComponent(0,1),arr.GetComponent(0,2)]
+
+        plane = vtk.vtkPlane()
+        plane.SetNormal(norms_min)
+        plane.SetOrigin(pt1)
+        #Surface(polydata=tri).write_surface_mesh(output_path+'triangle.vtk')
+
+        clipper = vtk.vtkClipPolyData()
+        clipper.SetClipFunction(plane)
+        clipper.SetInputData(self.surface)
+        clipper.SetGenerateClippedOutput(True)
+        clipper.Update()
+
+        clipped_surf = None
+        #print(clipper.GetOutput().GetNumberOfCells() , clipper.GetClippedOutput().GetNumberOfCells())
+        # select the larger of the two pieces as we are only trimming the bottom or top
+        if check_correct_clipped_part:
+            # need to check which is the correct clipped output
+            if clipper.GetOutput().GetNumberOfCells() > clipper.GetClippedOutput().GetNumberOfCells():
+                clipped_surf = clipper.GetOutput()
+            else:
+                clipped_surf = clipper.GetClippedOutput()
+        else:
+            clipped_surf = clipper.GetClippedOutput()
+        cleaner = vtk.vtkCleanPolyData()
+        cleaner.SetInputData(clipped_surf)
+        cleaner.Update()
+
+        connectivityfilt = vtk.vtkPolyDataConnectivityFilter()
+        connectivityfilt.SetInputData(cleaner.GetOutput())
+        connectivityfilt.SetExtractionModeToLargestRegion()
+        connectivityfilt.Update()
+
+
+        if output_filename is not None:
+            Surface(polydata=connectivityfilt.GetOutput()).write_surface_mesh(output_filename)
+
+        return connectivityfilt.GetOutput()
+#         Surface(polydata=clipped1).write_surface_mesh(output_path+'clipped1.vtk')
+#         Surface(polydata=clipped2).write_surface_mesh(output_path+'clipped2.vtk')
+
+
+    def clip_surface_at_given_x(self, x_offset, output_filename = None):
+
+        # use this sqaure as the cutting plane
+        lower_bound = [self.surface.GetBounds()[0],self.surface.GetBounds()[2],self.surface.GetBounds()[4]]
+        upper_bound = [self.surface.GetBounds()[1],self.surface.GetBounds()[3],self.surface.GetBounds()[5]]
+        #center = [(lower_bound[0]+upper_bound[0])/2,(lower_bound[1]+upper_bound[1])/2,(lower_bound[2]+upper_bound[2])/2]
+
+        x = upper_bound[0]+x_offset
+        pt1 = [x,upper_bound[1],upper_bound[2]]
+        pt2 = [x,lower_bound[1],lower_bound[2]]
+        pt3 = [x,lower_bound[1],upper_bound[2]]
+
+        triangle = vtk.vtkTriangle()
+        triangle.GetPointIds().SetId(0,0)
+        triangle.GetPointIds().SetId(1,1)
+        triangle.GetPointIds().SetId(2,2)
+
+        points = vtk.vtkPoints()
+        points.InsertNextPoint(pt1)
+        points.InsertNextPoint(pt2)
+        points.InsertNextPoint(pt3)
+
+        triangles = vtk.vtkCellArray()
+        triangles.InsertNextCell(triangle )
+
+        tri_min = vtk.vtkPolyData()
+        tri_min.SetPoints(points)
+        tri_min.SetPolys(triangles)
+
+        #Surface(polydata=tri_min).write_surface_mesh(output_path+exp_name+'tri_min.vtk')
+
+        norm_gen = vtk.vtkPolyDataNormals()
+        norm_gen.SetInputData(tri_min)
+        norm_gen.ComputeCellNormalsOn()
+        norm_gen.Update()
+        pdata_with_norms = norm_gen.GetOutput()
+        arr = pdata_with_norms.GetCellData().GetNormals()
+        norms_min = [arr.GetComponent(0,0),arr.GetComponent(0,1),arr.GetComponent(0,2)]
+
+        plane = vtk.vtkPlane()
+        plane.SetNormal(norms_min)
+        plane.SetOrigin(pt1)
+        #Surface(polydata=tri).write_surface_mesh(output_path+'triangle.vtk')
+
+        clipper = vtk.vtkClipPolyData()
+        clipper.SetClipFunction(plane)
+        clipper.SetInputData(self.surface)
+        clipper.SetGenerateClippedOutput(True)
+        clipper.Update()
+
+        clipped_surf = None
+        #print(clipper.GetOutput().GetNumberOfCells() , clipper.GetClippedOutput().GetNumberOfCells())
+        # select the larger of the two pieces as we are only trimming the bottom or top
+        if clipper.GetOutput().GetNumberOfCells() > clipper.GetClippedOutput().GetNumberOfCells():
+            clipped_surf = clipper.GetOutput()
+        else:
+            clipped_surf = clipper.GetClippedOutput()
+
+        cleaner = vtk.vtkCleanPolyData()
+        cleaner.SetInputData(clipped_surf)
+        cleaner.Update()
+
+        connectivityfilt = vtk.vtkPolyDataConnectivityFilter()
+        connectivityfilt.SetInputData(cleaner.GetOutput())
+        connectivityfilt.SetExtractionModeToLargestRegion()
+        connectivityfilt.Update()
+
+
+        if output_filename is not None:
+            Surface(polydata=connectivityfilt.GetOutput()).write_surface_mesh(output_filename)
+
+        return connectivityfilt.GetOutput()
+
+    def create_pt_along_vector_at_given_distance(self,dist,a,b):
+        ''' find a unit vector along edge. add the distance given '''
+        #print(dist,a,b)
+        #ap = [pt[0] - a[0], pt[1] - a[1], pt[2] - a[2]]
+        n = np.array([b[0] - a[0], b[1] - a[1], b[2] - a[2]])
+        n_unit = n / np.linalg.norm(n)
+        ac = (dist * n_unit)
+        c = ac+a
+
+        return c
+
+    def get_distance(self,a,b):
+        return np.linalg.norm( np.array(b)-np.array(a) )
+
+    def get_vector_intersection_pt(self,start_vert,end_vert,extrapolation_len=10000):
+        '''for the given vector find its intersection with the surface as well as depth from it'''
+        intersec_pt = []
+        dist = 0
+        obbsurf = vtk.vtkOBBTree()
+        obbsurf.SetDataSet(self.surface)
+        obbsurf.BuildLocator()
+
+        if extrapolation_len != 0:
+            new_end_vert = self.create_pt_along_vector_at_given_distance(extrapolation_len,start_vert,end_vert)
+        else:
+            new_end_vert = end_vert
+
+        intersection_points = vtk.vtkPoints()
+        intersection_cellidlist = vtk.vtkIdList()
+        code = obbsurf.IntersectWithLine(new_end_vert, start_vert, intersection_points, intersection_cellidlist)
+
+        if intersection_points.GetNumberOfPoints() > 0:
+            intersec_pt = intersection_points.GetPoint(0)
+            if len(intersec_pt) > 0:
+                dist = self.get_distance(start_vert,intersec_pt)
+
+        return intersec_pt,dist
+
+    def is_neuron_sticking_out(self,sg):
+        linear_ind = 0
+        for i in range(len(sg.neuron.all_neurites_subgraphdata.edge_connectivity)):
+            #vert_from = sg.neuron.all_neurites_subgraphdata.vertices[(sg.neuron.all_neurites_subgraphdata.edge_connectivity[i][0])]
+            #vert_to = sg.neuron.all_neurites_subgraphdata.vertices[(sg.neuron.all_neurites_subgraphdata.edge_connectivity[i][1])]
+            for j in range(sg.neuron.all_neurites_subgraphdata.num_pts_per_edge[i]-1):
+                from_edge_pt = sg.neuron.all_neurites_subgraphdata.edge_pt_coords[linear_ind+j]
+                to_edge_pt = sg.neuron.all_neurites_subgraphdata.edge_pt_coords[linear_ind+j+1]
+                intersection_pt,dist = self.get_vector_intersection_pt(from_edge_pt[0:3],to_edge_pt[0:3],extrapolation_len=0)
+                if len(intersection_pt) > 0:
+                        return True
+            linear_ind = linear_ind +j
+#         for edge in sg.neuron.all_neurites_subgraphdata.edge_list:
+#             for i in range(len(edge)-1):
+#                 intersection_pt,dist = self.get_vector_intersection_pt(edge[i+1][0:3],edge[i][0:3],extrapolation_len=0)
+            #print(intersection_pt)
+
+        return False
+
+    def create_axis_field(self,target_surface,op_sg_name = None,flip_normals=True, validation_angle = None):
+        '''
+        from the self.surface create rays till they instersect the given surface
+        optionally write out the axis field spatial graph
+        '''
+        obbPia = vtk.vtkOBBTree()
+        obbPia.SetDataSet(target_surface.surface)
+        obbPia.BuildLocator()
+
+        obbwm = vtk.vtkOBBTree()
+        obbwm.SetDataSet(self.surface)
+        obbwm.BuildLocator()
+
+        source_cell_centers = vtk.vtkCellCenters()
+        source_cell_centers.SetInputData(self.surface)
+        source_cell_centers.Update()
+        source_centroid_cell_centers = source_cell_centers.GetOutput()
+
+        source_sphere_normals = vtk.vtkPolyDataNormals()
+        source_sphere_normals.SetInputData(self.surface)
+        source_sphere_normals.ComputePointNormalsOff()
+        source_sphere_normals.ComputeCellNormalsOn()
+        source_sphere_normals.SplittingOff()
+        if flip_normals is True:
+            source_sphere_normals.FlipNormalsOn()
+        else:
+            source_sphere_normals.FlipNormalsOff()
+        source_sphere_normals.AutoOrientNormalsOn()
+        source_sphere_normals.Update()
+        source_source_normals = source_sphere_normals.GetOutput().GetCellData().GetNormals()
+
+        dest_cell_centers = vtk.vtkCellCenters()
+        dest_cell_centers.SetInputData(target_surface.surface)
+        dest_cell_centers.Update()
+        dest_centroid_cell_centers = dest_cell_centers.GetOutput()
+
+        dest_sphere_normals = vtk.vtkPolyDataNormals()
+        dest_sphere_normals.SetInputData(target_surface.surface)
+        dest_sphere_normals.ComputePointNormalsOff()
+        dest_sphere_normals.ComputeCellNormalsOn()
+        dest_sphere_normals.SplittingOff()
+        if flip_normals is True:
+            dest_sphere_normals.FlipNormalsOff()
+        else:
+            dest_sphere_normals.FlipNormalsOn()
+        #dest_sphere_normals.AutoOrientNormalsOn()
+        dest_sphere_normals.Update()
+        dest_source_normals = dest_sphere_normals.GetOutput().GetCellData().GetNormals()
+
+        axis_field_sg_source = AmiraSpatialGraph()
+        axis_field_sg_dest = AmiraSpatialGraph()
+        from_verts = []
+        to_verts = []
+        for idx in range(source_centroid_cell_centers.GetNumberOfPoints()):
+
+            source_point = source_centroid_cell_centers.GetPoint(idx)
+            ##print(point)
+            source_normal = source_source_normals.GetTuple(idx)
+
+            # Calculate the 'target' of the ray based on 'RayCastLength'
+            point_target = list(np.array(source_point) + 5000*np.array(source_normal))
+
+            ##print('are we here')
+            intersection_points = vtk.vtkPoints()
+            intersection_cellidlist = vtk.vtkIdList()
+            code = obbPia.IntersectWithLine(point_target, source_point, intersection_points, intersection_cellidlist)
+
+            if intersection_points.GetNumberOfPoints() > 0:
+                if validation_angle is not None:
+                    dest_point = dest_centroid_cell_centers.GetPoint(intersection_cellidlist.GetId(0))
+                    dest_normal = dest_source_normals.GetTuple(intersection_cellidlist.GetId(0))
+                    point_target = list(np.array(dest_point) + 5000*np.array(dest_normal))
+                    int_points = vtk.vtkPoints()
+                    int_cellidlist = vtk.vtkIdList()
+                    code = obbwm.IntersectWithLine(point_target, dest_point, int_points, int_cellidlist)
+
+                    if int_points.GetNumberOfPoints() == 1:
+                        ##print('int fond')
+                        ##print(source_normal)
+                        ##print(dest_normal)
+                        # find the angle between the two rays
+                        cos_theta = np.dot(source_normal,dest_normal) / (np.linalg.norm(source_normal)*np.linalg.norm(dest_normal))
+                        if np.abs(cos_theta) < validation_angle:
+                            #axis_field_sg_dest.add_edge(dest_point,int_points.GetPoint(0))
+                            continue
+                    #axis_field_sg_source.add_edge(source_point,intersection_points.GetPoint(0))
+                    from_verts.append(source_point)
+                    to_verts.append(intersection_points.GetPoint(0))
+                else:
+                    #axis_field_sg_source.add_edge(source_point,intersection_points.GetPoint(0))
+                    from_verts.append(source_point)
+                    to_verts.append(intersection_points.GetPoint(0))
+
+        #if op_sg_name is not None:
+        #    axis_field_sg_source.write_spatial_graph(op_sg_name)
+        #axis_field_sg_dest.write_spatial_graph(path+'axis_field_sg_dest.am')
+        return from_verts,to_verts
+
+    def create_delulay_surface_2d(self,return_hull=False,output_filename = None):
+        delu2d = vtk.vtkDelaunay2D()
+        delu2d.SetInputData(self.surface)
+        delu2d.Update()
+
+
+        surf = vtk.vtkDataSetSurfaceFilter()
+        surf.SetInputData(delu2d.GetOutput())
+        surf.Update()
+
+        if output_filename is not None:
+            Surface(polydata=surf.GetOutput()).write_surface_mesh(output_filename)
+
+        if return_hull:
+            return surf.GetOutput()
+
+    def create_delulay_surface_3d(self,return_hull=False,output_filename = None):
+
+        hull = vtk.vtkDelaunay3D()
+        hull.SetInputData(self.surface)
+        hull.Update()
+
+        surf = vtk.vtkDataSetSurfaceFilter()
+        surf.SetInputData(hull.GetOutput())
+        surf.Update()
+
+        self.surface = surf.GetOutput()
+
+        if output_filename is not None:
+            Surface(polydata=surf.GetOutput()).write_surface_mesh(output_filename)
+        #Surface(polydata=surf.GetOutput()).write_surface_mesh(output_path+'new_hull1.vtk')
+
+        if return_hull:
+            return surf.GetOutput()
+
+    def get_center_of_mass(self,):
+        com = vtk.vtkCenterOfMass()
+        com.SetInputData(self.surface)
+        com.Update()
+
+        return com.GetCenter()

@@ -1,0 +1,49 @@
+[Buildset]
+BuildItems=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x01\x00\x00\x00\x0b\x00\x00\x00\x00\x01\x00\x00\x00\x18\x00R\x00o\x00i\x00G\x00e\x00n\x00e\x00r\x00a\x00t\x00o\x00r)
+
+[CMake]
+Build Directory Count=2
+CMakeDir=/Modules
+Current Build Directory Index=1
+ProjectRootRelative=./
+
+[CMake][CMake Build Directory 0]
+Build Directory Path=file:///home/neuromorph/projects/RoiGenerator/build
+Build Type=Debug
+CMake Binary=file:///usr/bin/cmake
+Environment Profile=
+Extra Arguments=
+Install Directory=file:///usr/local
+
+[CMake][CMake Build Directory 1]
+Build Directory Path=file:///network_home/mythreya/projects/RoiGenerator/
+Build Type=
+CMake Binary=file:///usr/local/bin/cmake
+Environment Profile=
+Extra Arguments=
+Install Directory=file:///usr/local
+
+[Launch]
+Launch Configurations=Launch Configuration 0
+
+[Launch][Launch Configuration 0]
+Configured Launch Modes=execute
+Configured Launchers=nativeAppLauncher
+Name=New Native Application Configuration
+Type=Native Application
+
+[Launch][Launch Configuration 0][Data]
+Arguments="/home/neuromorph/temp/DS_20140122_S016/" 016 0 106 "/home/neuromorph/temp/rois/" "/home/neuromorph/temp/S005_S028_merged_finished_test2.am" "/home/neuromorph/temp/S016_ZScaled_0_961_Trans.am"
+Dependencies=@Variant(\x00\x00\x00\t\x00\x00\x00\x00\x00)
+Dependency Action=Nothing
+EnvironmentGroup=default
+Executable=file:///network_home/mythreya/projects/RoiGenerator/BoutonFinder
+External Terminal=konsole --noclose --workdir %workdir -e %exe
+Project Target=RoiGenerator,BoutonFinder
+Use External Terminal=false
+Working Directory=file:///network_home/mythreya/projects/RoiGenerator
+isExecutable=true
+
+[MakeBuilder]
+Default Make Environment Profile=0
+Number Of Jobs=1

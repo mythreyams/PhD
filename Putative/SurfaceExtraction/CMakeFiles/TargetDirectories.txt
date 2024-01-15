@@ -1,0 +1,3 @@
+/home/mythreya/projects/SurfaceExtraction/CMakeFiles/edit_cache.dir
+/home/mythreya/projects/SurfaceExtraction/CMakeFiles/rebuild_cache.dir
+/home/mythreya/projects/SurfaceExtraction/CMakeFiles/Surface.dir

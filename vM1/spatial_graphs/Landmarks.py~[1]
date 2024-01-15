@@ -1,0 +1,165 @@
+class Landmarks:
+    ''' This class contains functions to handle a list of 3d coordinates in the amira format'''
+    pts = []
+
+    def __init__(self,filename='',pts=[],axis_directions=[1,1,1]):
+        self.transformation_matrix = []
+        self.transformation_applied = False
+        self.axis_directions = axis_directions
+        if len(filename)>0:
+            self.pts = self.read_landmarks(filename)
+        elif len(pts)>0:
+            self.pts = pts
+        else:
+            self.pts = []
+
+
+    def read_landmarks(self,filename):
+        manual_landmark_list = []
+        lines = []
+        with open(filename, 'r') as csb:
+            lines = csb.readlines()
+        number = 0
+
+        # for each manual landmark
+        for line in lines:
+            #print line
+            if line.startswith("@1"):
+                number = 1
+                continue
+            if number == 1 and line.isspace() == False:
+                #print line.split()
+                pt = list(map(float,line.split()))
+                pt = [pt[0]*self.axis_directions[0],pt[1]*self.axis_directions[1],pt[2]*self.axis_directions[2]]
+                manual_landmark_list.append(pt)
+
+        return manual_landmark_list
+
+    def apply_transformation(self,transformation_matrix=[],z_desired=None,trans_2d_only=False):
+
+        if len(transformation_matrix) > 0:
+            self.transformation_matrix = transformation_matrix
+        # transformation matrix 4x4 as a row first list
+        if len(self.pts)>0:
+            self.transformation_applied = True
+            tr_mat = np.reshape(self.transformation_matrix,[4,4])
+            if z_desired is not None:
+                # to translate in z to the desired position for section graphs
+                tr_mat[2,3] = z_desired - self.pts[0][2]
+            if trans_2d_only:
+                tr_mat[2,2] = 1
+                tr_mat[0,2] = 0
+                tr_mat[1,2] = 0
+                tr_mat[2,0] = 0
+                tr_mat[2,1] = 0
+            tmp = np.matmul(tr_mat,np.transpose(self.add_ones_column(self.pts)))
+            self.pts = np.transpose(tmp)
+
+    def apply_rotation(self,rot_mat=[],translation=None,trans_2d_only=False):
+
+        rot_mat = np.reshape(rot_mat,[3,3])
+
+        tmp = np.matmul(rot_mat,np.transpose(self.pts))
+        self.pts = np.transpose(tmp)
+
+        if translation is not None:
+            self.pts = self.pts - translation
+
+    def add_ones_column(self,data):
+        a = np.array(data).transpose()
+        b = [a[0],a[1],a[2],np.ones(len(data))]
+        c = np.array(b).transpose()
+        return c
+
+    def write_landmarks(self,filename):
+        with open(filename, 'w') as file:
+            file.write("# Avizo 3D ASCII 2.0 \n")
+            file.write("define Markers ")
+            file.write("{}".format(len(self.pts)))
+            file.write("\n")
+            file.write("Parameters {\n")
+            file.write("    NumSets 1,\n")
+            file.write("    ContentType \"LandmarkSet\"\n")
+            file.write("}\n")
+
+            file.write("Markers { float[3] Coordinates } @1\n")
+
+            file.write("# Data section follows\n")
+            file.write("@1\n")
+
+            if len(self.pts)!=0:
+                for landmark in self.pts:
+                    ##print(landmark[0][0])
+                    file.write("{}".format(landmark[0]))
+                    file.write(" ")
+                    file.write("{}".format(landmark[1]))
+                    file.write(" ")
+                    file.write("{}".format(landmark[2]))
+                    file.write("\n")
+
+    def append_landmarks(self,pts):
+        for pt in pts:
+            self.pts.append(pt)
+
+    def convertPointsToVtkPoints(self,pts = []):
+        plain_pts = []
+        if len(pts) > 0:
+            plain_pts = pts
+        else:
+            plain_pts = self.pts
+        vtkpoints = vtk.vtkPoints()
+        #points = axon_front_contour_2D + axon_back_contour_2D + dend_front_contour_2D + dend_back_contour_2D
+        for i in range(len(plain_pts)):
+            vtkpoints.InsertPoint(i,plain_pts[i][0],plain_pts[i][1],plain_pts[i][2])
+
+        return vtkpoints
+
+    def align_landmarks(self,ref_pts,mode=0,):
+        ''' This function performs rigid(+scaling) transformation of the input landmarks to register them to
+        the given target landmarks and apply the transformation to other landmarks / surfaces provided'''
+
+        # First convert the given landmarks into polydata in order to perform icp
+        #ref_landmarks = Landmarks(pts=ref_matching_landmarks)
+        #landmarks = Landmarks(pts=matching_landmarks)
+
+        ##print(pt_list)
+        icp = vtk.vtkLandmarkTransform()
+        icp.SetSourceLandmarks(self.convertPointsToVtkPoints(self.pts))
+        icp.SetTargetLandmarks(self.convertPointsToVtkPoints(ref_pts))
+        if mode == 0:
+            icp.SetModeToRigidBody()
+        elif mode == 1:
+            icp.SetModeToSimilarity()
+        else:
+            icp.SetModeToAffine()
+        icp.Modified()
+        icp.Update()
+
+        tr_matrix = []
+        for i in range(4):
+            for j in range(4):
+                tr_matrix.append(icp.GetMatrix().GetElement(j,i))
+
+
+        return icp,tr_matrix
+
+    def set_z_coord(self,z):
+        for i in range(len(self.pts)):
+            self.pts[i] = [self.pts[i][0],self.pts[i][1],z]
+
+    def set_axis_directions(self,axis=[1,1,1]):
+        for i in range(len(self.pts)):
+            self.pts[i] = [self.pts[i][0]*axis[0],self.pts[i][1]*axis[1],self.pts[i][2]*axis[2]]
+
+    def get_landmarks_in_bounding_box(self,bounds):
+        cropped_pts = []
+
+        for pt in self.pts:
+            if pt[0]>= bounds[0] and pt[0]<= bounds[1]                and pt[1]>= bounds[2] and pt[1]<= bounds[3]                and pt[2]>= bounds[4] and pt[2]<= bounds[5]:
+
+                cropped_pts.append(pt)
+
+        return cropped_pts
+
+    if __name__ == '__main__':
+        Landmarks.__init__()

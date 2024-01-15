@@ -1,0 +1,204 @@
+/****************************************************************************/
+/*                                                                          */
+/* File:      proximity_finder.h                                            */
+/*                                                                          */
+/* Purpose:                                                                 */
+/*                                                                          */
+/*                                                                          */
+/* Authors:   Christopher Tull                                              */
+/*            Alison Smyth                                                  */
+/*            Max-Planck-Institut fuer biologische Kybernetik               */
+/*                                                                          */
+/*                                                                          */
+/* EMail:     christopher.tull@tuebingen.mpg.de                             */
+/*                                                                          */
+/* History:   26.03.2014                                                    */
+/*                                                                          */
+/* Remarks:                                                                 */
+/*                                                                          */
+/****************************************************************************/
+
+
+
+
+#ifndef AXONDENDRITEPROXIMITYFINDER
+#define AXONDENDRITEPROXIMITYFINDER
+
+#include "edge_wrapper.h"
+#include "proximity.h"
+#include "amiraReader.h"
+#include "brick_image_reader.h"
+#include "typedefs.h"
+#include "typedefs_two.h"
+
+
+//#define DEBUG
+
+#define MAX_DIST        4
+
+#define SPATIAL_GRAPH_SAMPLING_DISTANCE 0.1
+
+// prox regoins with centroids closer than this are merged (in microns)
+#define MERGE_PROX_DISTANCE   15
+
+typedef EdgeWrapper SimpleAxon;
+typedef EdgeWrapper SimpleDendrite;
+
+//****************************
+
+class AxonDendriteProximityFinder
+{
+ public:
+     
+     AxonDendriteProximityFinder( AmiraSpatialGraph * merged_graph, const char* outputFilename, double max_dist, const char* somaLocationFileName);
+     
+     AxonDendriteProximityFinder(Reader * ameraReaderPointer, AmiraSpatialGraph * input_graph, AmiraSpatialGraph * merged_graph, ImageType::Pointer input_image, const char * inputFilename, int include_unknown, double max_dist, const char * manual_z_scale,const char* outputFilename);
+     
+     AxonDendriteProximityFinder(Reader * ameraReaderPointer, AmiraSpatialGraph * input_graph, ImageType::Pointer input_image, const char * inputFilename, int include_unknown, int numOfPointsAway, double max_dist,const char* outputFilename);
+     
+     AxonDendriteProximityFinder(Reader * ameraReaderPointer, AmiraSpatialGraph * input_graph, ImageType::Pointer input_image, const char * inputFilename,const char* outputFilename);
+     
+       
+     void findProximities(bool notestrun);
+     void findProximities1();
+     //void findOppositionsBetweenAxonDendrite(std::vector< Vertex * > * axonVertices,std::vector< Edge * > * axonEdges, std::vector< Vertex * > * dendriteVertices, std::vector< Edge * > * dendriteEdges, std::vector<Proximity *>* ProxCelSpecificArray );
+     void findOppositionsBetweenAxonDendrite(AmiraSpatialGraph * cell1, AmiraSpatialGraph * cell2, std::vector<Proximity *>* ProxCelSpecificArray );
+     void getCellSpecificSpatialGraphs();
+     void convertGraphIntoATree();
+     void writeGivenSpatialGraphFile(const char* filename, AmiraSpatialGraph * given_spatial_graph);
+     void sortProxDist( std::vector<Proximity *> *prox_list_unsorted, std::vector<Proximity *> *prox_list_sorted, bool set_linear_id );
+     void findValleys(std::vector<Proximity*>*inputList, std::vector<Proximity*>*outputProxVector,double threshold, double dist_to_merge);
+     void writeProxXls(const char* filename, std::vector<Proximity*> *sorted_prox_vector);
+     void writeProxXlsWithAxonDend(const char* filename, std::vector<Proximity*> *sorted_prox_vector);
+     void writeProxLandmarks( const char* outputFilename, std::vector<Proximity*> *sorted_prox_vector);
+     void writeProxAxonLandmarks( const char* outputFilename, std::vector<Proximity*> *sorted_prox_vector);
+     void writeProxDendLandmarks( const char* outputFilename, std::vector<Proximity*> *sorted_prox_vector);
+     void readLandmarksFile(const char* somaLocationFileName, std::vector<double*> * soma_locations_vector_ptr);
+     void RemoveDuplicateProximities(std::vector<Proximity*> *input_prox_vector);
+     //void writeProximityLandmarks(const char * outputFilename);
+     
+     bool readAmiraTransformations();
+     void removeDoubledProximites();
+     void mergreProximites(std::vector<Proximity *>*);
+    
+     bool manual_z_scaling(const char * offset, AmiraSpatialGraph * graph, bool inverse);
+     
+//     double ** readAndGetAmiraTransformation();
+     
+
+     std::vector<double *> * transformCoordinates(std::vector<double *> * list);
+     
+     //void writeProximityImages(const char * outputFilename, std::vector<Proximity *>* proxlistlist[][]);
+     
+     
+     void markLocalMaximums();
+     float averageLocalValues(Edge * currentEdge, std::list< double * >::iterator centerPoint, int property, int numToAverageInEachDirection);
+     void markBoutons();     
+     float calculateLocalStandardDeviation(Image2DType::Pointer image_plane, float x0, float y0, int radius);
+     float calculateLocalBrightness(Image2DType::Pointer image_plane, float x0, float y0, int radius);
+     float calculateThreshold(ImageType::Pointer image, float x0, float y0, float z0);
+     float setAverageThreshold();
+     float setAverageThreshold(int numOfPointsToAverage);
+     int setRadiusAndLocalBrightness(ImageType::Pointer image);
+      int addUpOpposingRaysAndFindShortest(std::vector<VECTOR *> vectors, VECTOR ** adjustment_vect, float* distance );
+      Image2DType::Pointer getImagePlane(int z, int depth, ImageType::Pointer input_image);
+      VECTOR * sendRay(float x0, float y0, float ray_length, unsigned int nr_of_rays, float threshold, unsigned int n, Image2DType::Pointer image_plane);
+      float bilinearInterpolation(float x, float y, Image2DType::Pointer image_plane);
+      void smoothRadii();
+      bool isWithinEuclideanRange(double* tmp, double* neighbor, unsigned int ldistance);
+      float getAverageStandardDeviation();
+      void getIDsFromMergedFile(AmiraSpatialGraph * merged_graph);
+      std::vector<double* > * transformCoordinatesZScale(std::vector<double *> * list, const char * offset);
+      double calculateConfidenceValue(Edge * currentEdge, /*double * coords , */std::vector<double*> * confidenceList, std::vector<double>  distances);
+      void setDistanceToVertex(int cell_index, double dist);
+      void setDistanceToVertex(int cell_index);
+      
+      bool foundInPushedStack(double * coordinate);
+      //void writeMasterHxFile(const char* outputFilename, const char * mergedAmiraFileName, int cellIDs);
+//      float boutonConfidenceValue(Edge * currentEdge, double * coords);
+//      void cutOffGraph(AmiraSpatialGraph * merged_graph);
+      
+      
+//      ImageType::Pointer getOriginalImage(char* file_name, int start_index, int end_index);
+//      
+     
+
+     
+
+
+  
+ private:
+     Reader * graphReaderPointer;
+     std::vector<SimpleAxon> axon_list;
+     std::vector<SimpleDendrite> dendrite_list;
+     std::vector<double*>  soma_locations_vector;
+     std::vector<AmiraSpatialGraph*>  cell_specific_spatial_graps_vector;
+     std::queue<Vertex*> unprocessed_vertex_que;
+     std::vector<std::vector<Edge*> * > cell_specific_axon_edges_list;
+     std::vector< std::vector<Edge*> * > cell_specific_dendrite_edges_list;
+     std::vector< std::vector<Edge*> * > cell_specific_soma_edges_list;
+     std::vector<std::vector<Vertex*> * > cell_specific_axon_vertices_list;
+     std::vector< std::vector<Vertex*> * > cell_specific_dendrite_vertices_list;
+     std::vector< std::vector<Vertex*> * > cell_specific_soma_vertices_list;
+     
+     //std::vector<std::vector<Proximity *>*> proximity_master_list;
+     
+     std::vector<Proximity *> proximity_list_1_2;
+     std::vector<Proximity *> proximity_list_2_1;
+     std::vector<Proximity *> proximity_list_1_3;
+     std::vector<Proximity *> proximity_list_3_1;
+     std::vector<Proximity *> proximity_list_2_3;
+     std::vector<Proximity *> proximity_list_3_2;
+     std::vector<Proximity *> proximity_list;
+//      std::vector<Proximity *> proximity_list_nondecon;
+     std::vector<double *> * all_bouton_list;
+     ImageType::Pointer original_image;
+//      ImageType::Pointer original_image_nondecon;
+     float max_dist;
+     AmiraSpatialGraph * amira_graph;
+     //AmiraSpatialGraph * transformed_section_graph;
+     AmiraSpatialGraph * merged_graph;
+     AmiraSpatialGraph *transformed_graph;
+     double ** sectionTranslation;
+     double ** sectionRotation;
+     double ** transformation;
+     double ** inverse_transformation;
+     const char * inputfilename;
+     bool eliminateDoubledProximites;
+     bool include_unknown;
+     int numberOfPointsAway;
+     BoundingBox graph_bounding_box;
+     BoundingBox bounding_box_merged;
+     double * sectionboundingbox;
+     double * bound_box;
+     const char * offsetfile;
+     const char * outputpath;
+
+    
+     double calculateGap(double * axonPt, double * dendritePt, ImageType::Pointer image, bool istest,int prox);
+     bool isTheSameCell(int AxonID, int DendriteID);
+     bool isAxon(int ID);
+     bool isDendrite(int ID);
+     bool isSoma(int ID);
+     //bool getCellIndex(int AxonID, int DendriteID);
+     int getCellIndex(std::vector<int> *IDArray, int ID);
+     //void AxonDendriteProximityFinder::InitProxMasterList(void);
+     
+     
+     bool isInSectionBoundingBox(double * coords);
+     
+//     void getBoundingBox();
+     
+//     Edge * transformEdge(Edge * edge);
+     
+
+     void set_edge_lists(AmiraSpatialGraph * merged_input_graph, bool normalmode);
+     
+     
+};
+
+  
+
+
+#endif
+

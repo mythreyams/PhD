@@ -1,0 +1,158 @@
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: /opt/intel/bin/icc 
+Build flags: 
+Id flags: 
+
+The output was:
+4
+Catastrophic error: could not set locale "" to allow processing of multibyte characters
+
+compilation aborted for CMakeCCompilerId.c (code 4)
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: /opt/intel/bin/icc 
+Build flags: 
+Id flags: -c
+
+The output was:
+4
+Catastrophic error: could not set locale "" to allow processing of multibyte characters
+
+compilation aborted for CMakeCCompilerId.c (code 4)
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: /opt/intel/bin/icc 
+Build flags: 
+Id flags: -Aa
+
+The output was:
+4
+Catastrophic error: could not set locale "" to allow processing of multibyte characters
+
+compilation aborted for CMakeCCompilerId.c (code 4)
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /opt/intel/bin/icpc 
+Build flags: 
+Id flags: 
+
+The output was:
+4
+Catastrophic error: could not set locale "" to allow processing of multibyte characters
+
+compilation aborted for CMakeCXXCompilerId.cpp (code 4)
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /opt/intel/bin/icpc 
+Build flags: 
+Id flags: -c
+
+The output was:
+4
+Catastrophic error: could not set locale "" to allow processing of multibyte characters
+
+compilation aborted for CMakeCXXCompilerId.cpp (code 4)
+
+
+Determining if the C compiler works failed with the following output:
+Change Dir: /home/mythreya/projects/AxonDendriteProximityImagePublisher/build/CMakeFiles/CMakeTmp
+
+Run Build Command:/usr/bin/gmake "cmTryCompileExec2472863152/fast"
+gmake: Warning: File `Makefile' has modification time 0.057 s in the future
+/usr/bin/gmake -f CMakeFiles/cmTryCompileExec2472863152.dir/build.make CMakeFiles/cmTryCompileExec2472863152.dir/build
+gmake[1]: Entering directory `/home/mythreya/projects/AxonDendriteProximityImagePublisher/build/CMakeFiles/CMakeTmp'
+gmake[1]: Warning: File `CMakeFiles/cmTryCompileExec2472863152.dir/flags.make' has modification time 0.051 s in the future
+/usr/local/bin/cmake -E cmake_progress_report /home/mythreya/projects/AxonDendriteProximityImagePublisher/build/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec2472863152.dir/testCCompiler.c.o
+/opt/intel/bin/icc    -o CMakeFiles/cmTryCompileExec2472863152.dir/testCCompiler.c.o   -c /home/mythreya/projects/AxonDendriteProximityImagePublisher/build/CMakeFiles/CMakeTmp/testCCompiler.c
+Catastrophic error: could not set locale "" to allow processing of multibyte characters
+
+compilation aborted for /home/mythreya/projects/AxonDendriteProximityImagePublisher/build/CMakeFiles/CMakeTmp/testCCompiler.c (code 4)
+gmake[1]: *** [CMakeFiles/cmTryCompileExec2472863152.dir/testCCompiler.c.o] Error 4
+gmake[1]: Leaving directory `/home/mythreya/projects/AxonDendriteProximityImagePublisher/build/CMakeFiles/CMakeTmp'
+gmake: *** [cmTryCompileExec2472863152/fast] Error 2
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: /opt/intel/bin/icc 
+Build flags: 
+Id flags: 
+
+The output was:
+4
+Catastrophic error: could not set locale "" to allow processing of multibyte characters
+
+compilation aborted for CMakeCCompilerId.c (code 4)
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: /opt/intel/bin/icc 
+Build flags: 
+Id flags: -c
+
+The output was:
+4
+Catastrophic error: could not set locale "" to allow processing of multibyte characters
+
+compilation aborted for CMakeCCompilerId.c (code 4)
+
+
+Compiling the C compiler identification source file "CMakeCCompilerId.c" failed.
+Compiler: /opt/intel/bin/icc 
+Build flags: 
+Id flags: -Aa
+
+The output was:
+4
+Catastrophic error: could not set locale "" to allow processing of multibyte characters
+
+compilation aborted for CMakeCCompilerId.c (code 4)
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /opt/intel/bin/icpc 
+Build flags: 
+Id flags: 
+
+The output was:
+4
+Catastrophic error: could not set locale "" to allow processing of multibyte characters
+
+compilation aborted for CMakeCXXCompilerId.cpp (code 4)
+
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" failed.
+Compiler: /opt/intel/bin/icpc 
+Build flags: 
+Id flags: -c
+
+The output was:
+4
+Catastrophic error: could not set locale "" to allow processing of multibyte characters
+
+compilation aborted for CMakeCXXCompilerId.cpp (code 4)
+
+
+Determining if the C compiler works failed with the following output:
+Change Dir: /home/mythreya/projects/AxonDendriteProximityImagePublisher/build/CMakeFiles/CMakeTmp
+
+Run Build Command:/usr/bin/gmake "cmTryCompileExec208123659/fast"
+gmake: Warning: File `Makefile' has modification time 0.059 s in the future
+/usr/bin/gmake -f CMakeFiles/cmTryCompileExec208123659.dir/build.make CMakeFiles/cmTryCompileExec208123659.dir/build
+gmake[1]: Entering directory `/home/mythreya/projects/AxonDendriteProximityImagePublisher/build/CMakeFiles/CMakeTmp'
+gmake[1]: Warning: File `CMakeFiles/cmTryCompileExec208123659.dir/flags.make' has modification time 0.053 s in the future
+/usr/local/bin/cmake -E cmake_progress_report /home/mythreya/projects/AxonDendriteProximityImagePublisher/build/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec208123659.dir/testCCompiler.c.o
+/opt/intel/bin/icc    -o CMakeFiles/cmTryCompileExec208123659.dir/testCCompiler.c.o   -c /home/mythreya/projects/AxonDendriteProximityImagePublisher/build/CMakeFiles/CMakeTmp/testCCompiler.c
+Catastrophic error: could not set locale "" to allow processing of multibyte characters
+
+compilation aborted for /home/mythreya/projects/AxonDendriteProximityImagePublisher/build/CMakeFiles/CMakeTmp/testCCompiler.c (code 4)
+gmake[1]: *** [CMakeFiles/cmTryCompileExec208123659.dir/testCCompiler.c.o] Error 4
+gmake[1]: Leaving directory `/home/mythreya/projects/AxonDendriteProximityImagePublisher/build/CMakeFiles/CMakeTmp'
+gmake: *** [cmTryCompileExec208123659/fast] Error 2
+
+

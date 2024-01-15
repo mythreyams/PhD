@@ -1,0 +1,35 @@
+# This project is designed to be built outside the Insight source tree.
+PROJECT(SpatialGraphToDistanceTree)
+
+# Find ITK.
+
+#FIND_PACKAGE(ITK)
+#IF(ITK_FOUND)
+#  INCLUDE(${ITK_USE_FILE})
+#ELSE(ITK_FOUND)
+#  MESSAGE(FATAL_ERROR
+#          "Cannot build without ITK.  Please set ITK_DIR.")
+#ENDIF(ITK_FOUND)
+
+#LINK_LIBRARIES(ITKBasicFilters ITKIO )
+
+#CMake Optimizing
+SET(CMAKE_BUILD_TYPE RELEASE )
+SET(CMAKE_CXX_FLAGS_DEBUG "-dDEBUG")
+SET(CMAKE_C_FLAGS_DEBUG "-dDEBUG")
+SET(CMAKE_CXX_FLAGS_RELEASE "-O2 -openmp")
+SET(CMAKE_C_FLAGS_RELEASE "-O2 -openmp")
+SET(CMAKE_VERBOSE_MAKEFILE "TRUE")
+
+#Sources
+INCLUDE_DIRECTORIES(src)
+
+SET(SpatialGraphToDistanceTreeSources   src/spatialGraphToDistanceTree.cpp src/amiraReader.cpp src/amiraReader.h src/typedefs.h src/basics.cpp src/basics.h src/utility.cpp src/utility.h)
+
+#SET(NeuroMorphSources src/neuro_morph.cpp src/coordinates.cpp src/predecon.cpp src/streamer.cpp src/morphologyfilter.cpp src/objectlist.cpp src/compartmentlist.cpp src/compartment.cpp src/segmentation.cpp src/primitive.cxx src/skeletonization.cxx src/bloodvesselpattern.cpp src/image_reader.cpp src/hoc_streamer.cpp)
+
+
+ADD_EXECUTABLE( SpatialGraphToDistanceTree ${SpatialGraphToDistanceTreeSources} )
+
+#TARGET_LINK_LIBRARIES(SpatialGraphToDistanceTree ITKCommon ITKIO)
+SET_TARGET_PROPERTIES(SpatialGraphToDistanceTree PROPERTIES LINK_FLAGS "-openmp")

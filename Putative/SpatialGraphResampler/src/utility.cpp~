@@ -1,0 +1,286 @@
+
+#include "utility.h"
+
+
+/****************************************************************************/
+/*get_cwd() utility function that returns string with current working dir   */
+/****************************************************************************/
+
+std::string Utility::get_cwd()
+{
+    std::size_t buf_size = 1024;
+    char* buf = NULL;
+    char* r_buf;
+  
+    buf = static_cast<char*>(realloc(buf, buf_size));
+    r_buf = getcwd(buf, buf_size);
+
+    std::string str(buf);
+    free(buf);
+    return str;
+};
+
+
+int Utility::calc_mode(long* histogram, int size)
+{
+    int temp = 0, mode = 0;
+    
+    for(int i=0;i<size;i++)    									//calculate mode of pixels
+    {
+      //////////////std::cout << i << " "<< mode_array[i] << std::endl;
+      if(histogram[i] > temp)
+      {
+	temp = histogram[i];
+	mode = i;
+      }
+    }
+    
+    return mode;
+};
+
+
+float Utility::calc_mean(long* histogram, int size, int lower_threshold)
+{
+  double sum=0, count=0;
+  
+  for(int i=lower_threshold+1;i<size;i++)
+  {
+    sum += histogram[i] * i;
+    count += histogram[i];
+  }
+  
+  return (float) (sum/count);
+};
+
+double Utility::calc_vector_mean(std::vector<double> list)
+{
+  double sum=0;
+  
+  for(int i=0;i<list.size();i++)
+  {
+    sum += list.at(i);
+  }
+  
+  return (double) (sum/list.size());
+};
+
+double Utility::calc_vector_variance(std::vector<double> list, double mean)
+{
+  double sum=0, temp=0;
+  
+  
+  for(int i=0;i<list.size();i++)
+  {
+    temp = list.at(i) - mean;
+    sum += (temp*temp);
+  }
+  
+  return (double) (sum/list.size());
+};
+
+
+
+int Utility::calc_max(long* histogram, int size)
+{
+  int max=0;
+  for(int i=0;i<size;i++)
+  {
+    if(histogram[i] != 0)
+      max = i;
+  }
+  
+  return max;
+};
+
+
+float Utility::calc_variance(long* histogram, int size, float mean, int lower_threshold)
+{
+  double sum=0, count=0, temp=0;
+  
+  
+  for(int i=lower_threshold+1;i<size;i++)
+  {
+    temp = i - mean;
+    sum += histogram[i] * (temp*temp);
+    count += histogram[i];
+  }
+  
+  return (float) (sum/count);
+};
+
+int Utility::calc_median(long* histogram, int lower, int upper)
+{
+  long sum=0;
+  int i;
+  
+  
+  for(i=lower;i<upper;i++)
+  {
+      sum += histogram[i];
+  }
+  sum /= 2;
+  
+  for(i=lower;i<upper;i++)
+  {   
+      if(sum <=0)
+	break;
+	
+      sum -= histogram[i];
+  }
+  
+  return i;
+};
+
+int Utility::calc_dotProduct_int(int a[], int b[], int dim)
+{
+    int sum = 0;
+    
+    for(int i=0; i< dim; i++)
+    {
+	sum += a[i]*b[i];
+    }
+    return sum;
+};
+
+double Utility::calc_dotProduct_double(double * a, double * b, int dim)
+{
+    double sum = 0;
+    
+    for(int i=0; i< dim; i++)
+    {
+	sum += a[i]*b[i];
+    }
+    return sum;
+};
+
+double Utility::euclidean_distance(double * a, double * b, int dim, float z_scalar)
+{
+    double dist = 0;
+    double diff = 0;
+    
+    for(int i=0; i< dim; i++)
+    {
+	diff = a[i]-b[i];
+	if(i == Z_COORD)
+	  dist += z_scalar*diff*diff;
+	else 
+	  dist += diff*diff;
+    }
+    return sqrt(dist);
+};
+
+
+
+void Utility::writeCoordinateListinAmiraCoords(std::list<double*> listinImageCoords, const char* outputPathname, const char* outputFilename, bool scale, bool translate, bool transform )
+{
+    
+  double boutonCount = 0;  
+  ////////////std::cout<< "in writeLandmarkFile" << std::endl;
+  ////////////std::cout<< dia_list->size() << std::endl;
+  ////////////std::cout<< outputPathname << std::endl;
+  
+// transformToWorldCoordinates(list);
+   if(chdir(outputPathname) != 0)
+            perror("Couldn't open image drirectory!");
+  std::string format = outputFilename;
+  format += "_locations.landmarkAscii";
+  std::ofstream LandMarkData( format.c_str() );
+  
+  
+  
+  LandMarkData << "# AmiraMesh 3D ASCII 2.0"            << std::endl;
+  LandMarkData << ""                                    << std::endl;
+  LandMarkData << ""                                    << std::endl;
+  LandMarkData << "define Markers " << listinImageCoords.size()    << std::endl;
+  LandMarkData << ""                                    << std::endl;
+  LandMarkData << "Parameters {"                        << std::endl;
+  LandMarkData << "    NumSets 1,"                      << std::endl;
+  LandMarkData << "    ContentType \"LandmarkSet\""     << std::endl;
+  LandMarkData << "}"                                   << std::endl;
+  LandMarkData << ""                                    << std::endl;
+  LandMarkData << "Markers { float[3] Coordinates } @1" << std::endl;
+  LandMarkData << ""                                    << std::endl;
+  LandMarkData << "# Data section follows"              << std::endl;
+  LandMarkData << "@1"                                  << std::endl;
+  
+  std::list<double*>::iterator list_it1;
+  for(list_it1 = listinImageCoords.begin() ; list_it1 != listinImageCoords.end(); list_it1++)
+  {
+    double *list_it = new double[3];
+    
+    (list_it)[0] = (*list_it1)[0] ;
+    (list_it)[1] = (*list_it1)[1] ;
+    (list_it)[2] = (*list_it1)[2] ;
+    
+    if(scale == 1)
+    {
+      //scale
+      (list_it)[0] = (list_it)[0] * XYSAMPLING;
+      (list_it)[1] = (list_it)[1] * XYSAMPLING;
+      (list_it)[2] = (list_it)[2] * ZSAMPLING;
+    }
+    
+    if(translate == 1)
+    {
+      // Apply image translation before scaling
+      (list_it)[0] =  (list_it)[0] + imageTranslation[0];
+      (list_it)[1] =  (list_it)[1] + imageTranslation[1];
+      (list_it)[2] =  (list_it)[2] + imageTranslation[2];
+    }
+    
+    if(transform == 1)
+    {
+    // transform to get the original point
+    double oldCoords[4], newCoords[4];
+	for(int ii = 0; ii < 3; ++ii)
+	{
+		oldCoords[ii] = (list_it)[ii];
+		newCoords[ii] = 0;
+	}
+	oldCoords[3] = 1;
+	newCoords[3] = 1;
+	for(int ii = 0; ii < 3; ++ii)
+		for(int jj = 0; jj < 4; ++jj)
+			newCoords[ii] += transformation[ii][jj]*oldCoords[jj];
+	
+	for(int ii = 0; ii < 3; ++ii)
+	{
+		(list_it)[ii] = newCoords[ii];
+		//BoutonParamsArray[NumOfLandmarks].nearestPoint[ii] = newCoords[ii];
+	}
+	
+    }
+
+	LandMarkData <<  (list_it)[0] << " " <<  (list_it)[1] << " " <<  (list_it)[2] << std::endl;
+    
+      
+  }
+  
+//   std::list< double * >::const_iterator diaIt = dia_list.begin();
+//         ////////////std::cout<< "in before loop" << std::endl;
+//         //////////std::cout<< imageTranslation[0]<<" " <<imageTranslation[1]<<" " <<imageTranslation[2]<<" " << std::endl;
+//         while(diaIt != dia_list.end())
+//         {
+//             //////////////std::cout<< "in loop" << std::endl;
+//                 double * nextPt = *diaIt;
+//                 LandMarkData << nextPt[X_COORD] + imageTranslation[0] << " " << nextPt[Y_COORD]+imageTranslation[1] << " " << nextPt[Z_COORD]+imageTranslation[2] << std::endl;
+//                 //////////std::cout << nextPt[X_COORD]  << " " << nextPt[Y_COORD] << " " << nextPt[Z_COORD] << std::endl;
+//                 diaIt++;
+//                 
+//         }
+        ////////////std::cout<< "in after loop" << std::endl;
+  /*for(int i=0; i < list->size(); i++)
+  {
+    LandMarkData << list->at(i)[X_COORD] << " " << list->at(i)[Y_COORD] << " " << list->at(i)[Z_COORD] << std::endl;
+  } */
+  
+  LandMarkData.close();
+};
+
+
+
+
+
+
+
+
